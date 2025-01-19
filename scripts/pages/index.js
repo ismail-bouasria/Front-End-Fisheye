@@ -43,15 +43,18 @@ init();
 
 function photographerTemplate(data) {
     const { id, name, tagline, city, country, price, portrait } = data;
-     console.log(portrait);
+    console.log(portrait);
     const picture = `assets/photographers/${portrait}`;
 
     function getUserCardDOM() {
         const article = document.createElement('article');
 
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'img-container'
         const img = document.createElement('img');
         img.setAttribute('src', picture);
         img.setAttribute('alt', name);
+
 
         const h2 = document.createElement('h2');
         h2.textContent = name;
@@ -68,7 +71,8 @@ function photographerTemplate(data) {
         priceElement.textContent = `${price}€/jour`;
         priceElement.className = 'photographer-price';
 
-        article.appendChild(img);
+        article.appendChild(imgContainer);
+        imgContainer.appendChild(img);
         article.appendChild(h2);
         article.appendChild(location);
         article.appendChild(tagLine);
@@ -80,4 +84,4 @@ function photographerTemplate(data) {
     return { id, name, getUserCardDOM };
 }
 
-    
+

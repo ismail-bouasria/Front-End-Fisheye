@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographe</title>
+    <link rel="stylesheet" href="photographer.css">
+    <link rel="stylesheet" href="style.css">
+    <script defer src="scripts/pages/photographer.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" aria-label="Retour à l'accueil">
+            <img src="assets/images/logo.png" class="logo" alt="fisheye logo"/>
+        </a>
+    </header>
+
+    <main>
+        <!-- Section Header du photographe -->
+        <section class="photograph-header">
+            <div>
+                <h2 id="photographer-name">Mimi Keel</h2>
+                <p id="photographer-location">London, UK</p>
+                <p id="photographer-tagline">Voir le beau dans le quotidien</p>
+            </div>
+            <button class="contact_button" aria-label="Contactez-moi">Contactez-moi</button>
+            <div class="photographer-image">
+                <img src="assets/mimi_keel.jpg" alt="Portrait de Mimi Keel" id="photographer-portrait">
+            </div>
+        </section>
+
+        <!-- Section pour trier et afficher les photos -->
+        <section>
+            <div class="sort-options">
+                <label for="sort-dropdown" id="sort-label">Trier par</label>
+                <select id="sort-dropdown" aria-labelledby="sort-label">
+                    <option value="popularity">Popularité</option>
+                    <option value="date">Date</option>
+                    <option value="title">Titre</option>
+                </select>
+            </div>
+            <div class="photographer-gallery">
+                <!-- Exemple d'image -->
+                <article class="gallery-item">
+                    <img src="assets/photo1.jpg" alt="Photo description" class="gallery-image">
+                    <div class="gallery-info">
+                        <h3 class="photo-title">Arc-en-ciel</h3>
+                        <div class="photo-details">
+                            <span class="photo-likes">12 ❤</span>
+                        </div>
+                    </div>
+                </article>
+                <!-- Répétez les articles pour d'autres photos -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Section pour la modale de contact -->
+    <dialog class="modal">
+        <div>
+            <h2>Contactez-moi</h2>
+            <img src="assets/close_icon.png" alt="Fermer" class="modal-close">
+        </div>
+        <form>
+            <div>
+                <label for="firstname">Prénom</label>
+                <input type="text" id="firstname" name="firstname" required>
+            </div>
+            <div>
+                <label for="lastname">Nom</label>
+                <input type="text" id="lastname" name="lastname" required>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="message">Votre message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="contact_button">Envoyer</button>
+        </form>
+    </dialog>
+
+</body>
+</html>

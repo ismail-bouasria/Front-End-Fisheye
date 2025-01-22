@@ -31,6 +31,7 @@ export class PhotographerPage {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("Données reçues depuis l'API :", data);
 
         // Extraire les photographes de la réponse
         photographers = data.photographers;
@@ -91,6 +92,7 @@ export class PhotographerPage {
         }
         // Récupération des données
         const data = await response.json();
+        console.log("Données reçues depuis l'API :", data);
 
         // Extraire les medias de la réponse
         medias = data.media;
@@ -161,15 +163,15 @@ export class PhotographerPage {
   async init() {
     // Récupère l'ID du photographe depuis l'URL
     this.photographerId = this.getPhotographerIdFromUrl();
-
+    console.log("ID du photographe récupéré de l'URL:", this.photographerId);
 
     // Récupère les datas du photographe en fonction de son ID
     this.photographer = await this.getPhotographerById(this.photographerId);
-    
+    console.log("Photographe trouvé:", this.photographer);
 
     // Récupère les medias du photographe en fonction de son ID
     this.media = await this.getMediaByIdPhotographer(this.photographerId);
-   
+    console.log("Media trouvé:", this.media);
 
     // Affiche les données du photographe
     this.displayPhotographerData(this.photographer, this.media);

@@ -1,77 +1,66 @@
+// @ts-nocheck
+import { photographerTemplate } from "../templates/photographerTemplate.js";
+
 async function getPhotographers() {
-        // Récupérer les données depuis le fichier JSON
-        const response = await fetch('data/photographers.json');
-        const data = await response.json();
-        // Retourner les données
-        return data;
-       
-}
-async function init() {
-    // Récupère les datas des photographes
-    const { photographers } = await getPhotographers();
-
-    // Appeler la fonction pour afficher les photographes
-    displayData(photographers);
-}
-
-// Initialisation de l'application
-init();
-
-function photographerTemplate(data) {
-    const { id, name, tagline, city, country, price, portrait } = data;
-    const picture = `assets/photographers/${portrait}`;
-
-    function getUserCardDOM() {
-        const article = document.createElement('article');
-
-        const link = document.createElement('a');
-        link.setAttribute('href', `photographer.html?id=${id}`);
-        link.setAttribute('aria-label', `Voir la page de ${name}`);
-
-        const imgContainer = document.createElement('div');
-        imgContainer.className = 'img-container'
-
-        const img = document.createElement('img');
-        img.setAttribute('src', picture);
-        img.setAttribute('alt', name);
-
-        const h2 = document.createElement('h2');
-        h2.textContent = name;
-        
-        const location = document.createElement('p');
-        location.textContent = `${city}, ${country}`;
-        location.className = 'photographer-location';
-
-        const tagLine = document.createElement('p');
-        tagLine.textContent = tagline;
-        tagLine.className = 'photographer-tagline';
-
-        const priceElement = document.createElement('p');
-        priceElement.textContent = `${price}€/jour`;
-        priceElement.className = 'photographer-price';
-
-        article.appendChild(link);
-        link.appendChild(imgContainer);
-        imgContainer.appendChild(img);
-        link.appendChild(h2);
-        article.appendChild(location);
-        article.appendChild(tagLine);
-        article.appendChild(priceElement);
-
-        return article;
+  // Récupérer les photographes depuis le localStorage
+  let photographers = window.localStorage.getItem("photographers");
+  // Vérifier si les photographes sont déjà stockés dans le localStorage
+  if (photographers === null) {
+    try {
+      // Récupération des données depuis l'API
+      const response = await fetch("./data/photographers.json");
+      if (!response.ok) {
+        // Gestion des erreurs
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      // Récupération des données
+      const data = await response.json();
+      // Extraire les photographes de la réponse
+      photographers = data.photographers;
+      // Transformation des données en JSON
+      const valeurPhotographers = JSON.stringify(photographers);
+      // Stockage des informations dans le localStorage sous la clé "photographers"
+      window.localStorage.setItem("photographers", valeurPhotographers);
+    } catch (error) {
+      // Gestion des erreurs
+      console.error("Erreur lors de la récupération des photographes:", error);
+      return { photographers: [] }; // Retourne un tableau vide en cas d'erreur
     }
-
-    return { id, name, getUserCardDOM };
+  } else {
+    // Analyser les données stockées pour obtenir le tableau des photographes
+    photographers = JSON.parse(photographers);
+  }
+  return { photographers };
 }
 
-async function displayData(photographers) {
-    const photographersSection = document.querySelector(".photographer_section");
+// Modèle de la carte utilisateur
+async function displayData(data) {
+  console.log("Data:", data);
+  // Vérifier si les données sont correctes
+  if (!data || !data.photographers) {
+    // Gestion des erreurs
+    console.error("Data format is incorrect:", data);
+    return;
+  }
 
-    photographers.forEach((photographer) => {
-        // Utilisez la fonction de template pour créer les éléments DOM
-        const photographerModel = photographerTemplate(photographer);
-        const userCardDOM = photographerModel.getUserCardDOM();
-        photographersSection.appendChild(userCardDOM);
-    });
+  // Récupérer la section des photographes
+  const photographersSection = document.querySelector(".photographer_section");
+  // Vérifier si la section existe
+  data.photographers.forEach((photographer) => {
+    // Créer une carte utilisateur pour chaque photographe
+    const photographerModel = photographerTemplate(photographer);
+    // Récupérer le DOM de la carte utilisateur
+    const userCardDOM = photographerModel.getUserCardDOM();
+    // Ajouter la carte utilisateur à la section des photographes
+    photographersSection.appendChild(userCardDOM);
+  });
 }
 
+async function init() {
+  // Récupère les datas des photographes
+  const data = await getPhotographers();
+  // Affiche les données
+  displayData(data);
+}
+
+init();

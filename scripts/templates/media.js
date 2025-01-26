@@ -63,10 +63,13 @@ export class Media {
         this.likes += 1; // Incrémente le nombre de likes
         likeButton.setAttribute("aria-pressed", "true"); // Modifie l'attribut aria pour indiquer l'état
         incrementLike = false;
+        likeIcon.classList.add("fa-solid");
       } else {
         this.likes -= 1; // Décrémente le nombre de likes
         likeButton.setAttribute("aria-pressed", "false"); // Modifie l'attribut aria pour indiquer l'état
         incrementLike = true;
+        likeIcon.classList.add("fa-regular")
+        likeIcon.classList.remove("fa-solid");
       }
       likeCount.textContent = this.likes; // Met à jour le nombre de likes affiché
       // Appelle une fonction pour mettre à jour les likes totaux
@@ -75,7 +78,7 @@ export class Media {
 
     // Crée l'icône de like (cœur)
     const likeIcon = document.createElement("i");
-    likeIcon.classList.add("fa-solid", "fa-heart", "photo-template__like-icon");
+    likeIcon.classList.add("fa-regular", "fa-heart", "photo-template__like-icon");
     likeIcon.setAttribute("aria-label", "Like");
 
     likeButton.appendChild(likeIcon); // Ajoute l'icône au bouton de like

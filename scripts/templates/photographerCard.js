@@ -13,6 +13,7 @@ export function getUserCardDOM(data) {
   // Crée un élément article pour la carte du photographe
   const article = document.createElement("article");
   article.classList.add("photographer_card"); // Ajoute une classe pour le style
+  article.setAttribute("tabindex", "0");
 
   // Crée un lien qui mène à la page du profil du photographe
   const anchor = document.createElement("a");

@@ -81,22 +81,32 @@ export function getUserHeaderDOM(data) {
  * @param {Array} medias - La liste des médias du photographe.
  * @param {string} firstName - Le prénom du photographe, utilisé pour la personnalisation du contenu.
  */
-export function getUserSelectDOM(medias, firstName) {
+export  async function getUserSelectDOM(medias, firstName) {
   const select = document.querySelector(".photograph-select");
   select.innerHTML = ""; // Vide le contenu existant du sélecteur
 
   // Crée et ajoute le label pour le sélecteur
   const label = document.createElement("label");
   label.setAttribute("for", "filter");
-  label.innerHTML = "Trier par";
+  label.textContent = "Trier par";
   select.appendChild(label);
 
   // Crée le sélecteur de tri
-  const photographerSelect = document.createElement("select");
-  photographerSelect.classList.add("photographer_select"); // Classe pour le style
-  photographerSelect.setAttribute("name", "filter");
+  const photographerSelect = document.createElement("div");
+  photographerSelect.classList.add("photographer_select");
   photographerSelect.setAttribute("id", "filter");
-  photographerSelect.setAttribute("role", "listbox"); // Rôle ARIA pour indiquer qu'il s'agit d'une liste
+  photographerSelect.setAttribute("role", "listbox");
+
+  // Élément affichant l'option sélectionnée
+  const optionSelected = document.createElement("div");
+  optionSelected.classList.add("selected-option");
+  optionSelected.textContent = "Popularité"; // Valeur par défaut
+  optionSelected.setAttribute("data-selected", "popularite");
+
+  // Conteneur des options
+  const divOptions = document.createElement("div");
+  divOptions.classList.add("options");
+  divOptions.classList.add("claused-options");
 
   // Crée les options pour le sélecteur de tri
   const options = [
@@ -106,30 +116,74 @@ export function getUserSelectDOM(medias, firstName) {
   ];
 
   options.forEach(optionData => {
-    const option = document.createElement("option");
-    option.classList.add("photographer_select__option"); // Classe pour le style
-    option.setAttribute("id", optionData.id);
-    option.value = optionData.value;
-    option.text = optionData.text;
-    option.setAttribute("role", "option"); // Rôle ARIA pour indiquer une option dans une liste
-    photographerSelect.appendChild(option);
+    const option = document.createElement("div");
+    option.classList.add("option");
+    option.setAttribute("data-value", optionData.value);
+    option.textContent = optionData.text;
+
+    // Gère le clic sur une option
+    option.addEventListener("click", function () {
+      optionSelected.textContent = this.textContent;
+      optionSelected.setAttribute("data-selected", this.getAttribute("data-value"));
+      divOptions.classList.remove("open");
+
+      // Met à jour le tri des médias
+      sortMedias(medias, this.getAttribute("data-value"));
+      getPhotographerGalleryDOM(medias, firstName);
+      Lightbox.init();
+    });
+
+    divOptions.appendChild(option);
   });
 
+  function toggleArrow(element) {
+    const arrow = element.querySelector('::after');
+    const currentContent = window.getComputedStyle(element, '::after').getPropertyValue('content');
+    
+    // Change le contenu du ::after
+    element.style.setProperty('content', currentContent === '"⌄"' ? '"^"' : '"⌄"');
+    console.log(currentContent);
+  }
+   toggleArrow(photographerSelect);
+  // Ajoute les éléments dans le sélecteur personnalisé
+  photographerSelect.appendChild(optionSelected);
+  photographerSelect.appendChild(divOptions);
   select.appendChild(photographerSelect);
 
-  // Ajoute un événement de changement pour le sélecteur
-  select.addEventListener("change", (event) => {
-    const sortValue = event.target.value; // Récupère la valeur de tri sélectionnée
-    if (sortValue === "popularite") {
-      medias.sort((a, b) => b.likes - a.likes); // Trie par popularité
-    } else if (sortValue === "date") {
-      medias.sort((a, b) => new Date(b.date) - new Date(a.date)); // Trie par date
-    } else if (sortValue === "titre") {
-      medias.sort((a, b) => a.title.localeCompare(b.title)); // Trie par titre
-    }
-    getPhotographerGalleryDOM(medias, firstName); // Met à jour la galerie avec les médias triés
-    Lightbox.init(); // Initialise la lightbox pour afficher les images en plein écran
+  // Gérer l'ouverture/fermeture du select
+  optionSelected.addEventListener("click", function () {
+    divOptions.classList.toggle("claused-options");
   });
+
+  // Fermer le select lorsqu'une option est choisie
+divOptions.querySelectorAll(".option").forEach(option => {
+  option.addEventListener("click", function () {
+    divOptions.classList.add("claused-options"); // Cache les options
+  });
+});
+
+
+  // Fermer le select si on clique en dehors
+  document.addEventListener("click", function (event) {
+    if (!photographerSelect.contains(event.target)) {
+      divOptions.classList.add("claused-options");
+    }
+  });
+}
+
+/**
+ * Trie les médias en fonction de la valeur sélectionnée
+ * @param {Array} medias - Liste des médias
+ * @param {string} sortValue - Critère de tri ("popularite", "date", "titre")
+ */
+function sortMedias(medias, sortValue) {
+  if (sortValue === "popularite") {
+    medias.sort((a, b) => b.likes - a.likes);
+  } else if (sortValue === "date") {
+    medias.sort((a, b) => new Date(b.date) - new Date(a.date));
+  } else if (sortValue === "titre") {
+    medias.sort((a, b) => a.title.localeCompare(b.title));
+  }
 }
 
 /**
